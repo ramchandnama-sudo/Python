@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔥 Brutal Roast AI Bot 🔥</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: #1a1a1a;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(90deg, #ff4500, #ff6b00);
+            padding: 40px 20px;
+            text-align: center;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            letter-spacing: 2px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+            font-weight: 300;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .input-section {
+            margin-bottom: 30px;
+        }
+
+        .input-label {
+            color: #ffaa00;
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .input-area {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: flex-start;
+        }
+
+        #prompt {
+            flex: 1;
+            min-width: 250px;
+            min-height: 60px;
+            padding: 15px;
+            border: 2px solid #ff4500;
+            border-radius: 8px;
+            background: #2a2a2a;
+            color: white;
+            font-size: 1em;
+            font-family: 'Courier New', monospace;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+
+        #prompt:focus {
+            outline: none;
+            border-color: #ffaa00;
+            background: #333333;
+        }
+
+        #prompt::placeholder {
+            color: #888888;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            min-width: 200px;
+        }
+
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        #roastBtn {
+            background: linear-gradient(90deg, #ff4500, #ff6b00);
+            color: white;
+            flex: 1;
+            min-width: 150px;
+            padding: 15px 25px;
+            box-shadow: 0 5px 15px rgba(255, 69, 0, 0.4);
+        }
+
+        #roastBtn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 69, 0, 0.6);
+        }
+
+        #roastBtn:active {
+            transform: translateY(0);
+        }
+
+        #roastBtn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .clear-btn {
+            background: #555555;
+            color: white;
+            padding: 12px 20px;
+        }
+
+        .clear-btn:hover {
+            background: #666666;
+        }
+
+        .output-section {
+            margin-top: 30px;
+        }
+
+        .output-label {
+            color: #ffaa00;
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .roasts-container {
+            display: grid;
+            gap: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 5px;
+        }
+
+        .roast-item {
+            background: #2a2a2a;
+            border-left: 5px solid #ff4500;
+            padding: 15px;
+            border-radius: 8px;
+            animation: slideIn 0.3s ease;
+        }
+
+        .roast-item.target {
+            border-left-color: #ffaa00;
+        }
+
+        .roast-item.user {
+            border-left-color: #ff6666;
+        }
+
+        .roast-text {
+            color: #ffffff;
+            font-size: 1em;
+            line-height: 1.5;
+            font-family: 'Courier New', monospace;
+        }
+
+        .roast-item.target .roast-text {
+            color: #ffaa00;
+        }
+
+        .roast-item.user .roast-text {
+            color: #ff6666;
+        }
+
+        .roast-time {
+            color: #888888;
+            font-size: 0.85em;
+            margin-top: 8px;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #888888;
+        }
+
+        .empty-state-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 3px solid #333333;
+            border-top: 3px solid #ff4500;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            background: #ff4500;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        /* Scrollbar styling */
+        .roasts-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .roasts-container::-webkit-scrollbar-track {
+            background: #2a2a2a;
+            border-radius: 10px;
+        }
+
+        .roasts-container::-webkit-scrollbar-thumb {
+            background: #ff4500;
+            border-radius: 10px;
+        }
+
+        .roasts-container::-webkit-scrollbar-thumb:hover {
+            background: #ff6b00;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .input-area {
+                flex-direction: column;
+            }
+
+            #prompt {
+                min-height: 80px;
+            }
+
+            .button-group {
+                width: 100%;
+            }
+
+            #roastBtn,
+            .clear-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔥 BRUTAL ROAST AI BOT 🔥</h1>
+            <p>Tell me about someone... Let me roast them mercilessly</p>
+        </div>
+
+        <div class="content">
+            <div class="error-message" id="errorMessage"></div>
+
+            <div class="input-section">
+                <label class="input-label">Your Prompt:</label>
+                <div class="input-area">
+                    <textarea 
+                        id="prompt" 
+                        placeholder="Describe someone or a situation... (e.g., 'lazy programmer', 'broke college student', 'gym bro')"
+                    ></textarea>
+                    <div class="button-group">
+                        <button id="roastBtn">🔥 ROAST 🔥</button>
+                        <button class="clear-btn" onclick="clearInput()">Clear</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="output-section">
+                <label class="output-label">Roasts:</label>
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                </div>
+                <div class="roasts-container" id="roastsContainer">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🌪️</div>
+                        <p>No roasts yet. Enter a description to get roasted!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const promptInput = document.getElementById('prompt');
+        const roastBtn = document.getElementById('roastBtn');
+        const roastsContainer = document.getElementById('roastsContainer');
+        const errorMessage = document.getElementById('errorMessage');
+        const loading = document.getElementById('loading');
+
+        // Focus on input on page load
+        promptInput.focus();
+
+        // Event listeners
+        roastBtn.addEventListener('click', generateRoast);
+        promptInput.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 'Enter') {
+                generateRoast();
+            }
+        });
+
+        async function generateRoast() {
+            const prompt = promptInput.value.trim();
+
+            if (!prompt) {
+                showError('Please enter a description!');
+                return;
+            }
+
+            // Clear previous error
+            hideError();
+
+            // Show loading
+            roastBtn.disabled = true;
+            loading.style.display = 'block';
+
+            try {
+                const response = await fetch('/roast', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ prompt: prompt })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Failed to generate roast');
+                }
+
+                const data = await response.json();
+
+                // Clear empty state if present
+                const emptyState = roastsContainer.querySelector('.empty-state');
+                if (emptyState) {
+                    roastsContainer.innerHTML = '';
+                }
+
+                // Add roasts to container
+                const now = new Date();
+                const time = now.toLocaleTimeString();
+
+                const targetRoastHTML = `
+                    <div class="roast-item target">
+                        <div class="roast-text">${escapeHtml(data.roast_target)}</div>
+                        <div class="roast-time">${time}</div>
+                    </div>
+                `;
+
+                const userRoastHTML = `
+                    <div class="roast-item user">
+                        <div class="roast-text">${escapeHtml(data.roast_user)}</div>
+                        <div class="roast-time">${time}</div>
+                    </div>
+                `;
+
+                roastsContainer.insertAdjacentHTML('afterbegin', userRoastHTML);
+                roastsContainer.insertAdjacentHTML('afterbegin', targetRoastHTML);
+
+                // Scroll to top
+                roastsContainer.scrollTop = 0;
+
+                // Clear input
+                promptInput.value = '';
+                promptInput.focus();
+
+            } catch (error) {
+                showError(error.message);
+            } finally {
+                roastBtn.disabled = false;
+                loading.style.display = 'none';
+            }
+        }
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.classList.add('show');
+            setTimeout(hideError, 5000);
+        }
+
+        function hideError() {
+            errorMessage.classList.remove('show');
+        }
+
+        function clearInput() {
+            promptInput.value = '';
+            promptInput.focus();
+        }
+
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, m => map[m]);
+        }
+    </script>
+</body>
+</html>

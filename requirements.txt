@@ -3,3 +3,5 @@ pillow
 beautifulsoup4
 selenium
 webdriver_manager
+flask
+gunicorn
